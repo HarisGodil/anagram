@@ -1,5 +1,9 @@
 package main
 
+import (
+	//"fmt"
+)
+
 type charList struct {
 	chars      []int //length 26, chars[0] is # of 'a's, chars[1] is # of 'b's, etc
 	components []string
@@ -27,6 +31,7 @@ func (c charList) addString(add string) charList {
 }
 
 func (c charList) withinBounds(other charList) bool {
+
 	for i, val := range c.chars {
 		if val < other.chars[i] {
 			return false
@@ -45,8 +50,15 @@ func generateInts(base string) []int {
 		if ascii == 32 || ascii == 39 { // space
 			continue
 		}
+		//fmt.Printf("%c %d\n", ascii, ascii)
 
 		ascii = ascii - 97
+		if ascii < 0 || ascii > 26 {
+			chars[0] = 99999; // used to prevent words with special characters from being used
+							  // should be changed to something that is more understandable
+			continue;
+		}
+
 		chars[ascii]++
 	}
 
