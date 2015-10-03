@@ -41,7 +41,7 @@ var find = cli.Command{
 	Name:    "find",
 	Usage:   "finds the anagram",
 	Aliases: []string{"f"},
-	Action:  fileToList,
+	Action:  solveAnagram,
 }
 
 	//fileToList("/home/haris/Downloads/wordlist")
@@ -60,7 +60,6 @@ func fileToList(c *cli.Context) {
 	scanner := bufio.NewScanner(file)
 
 	prevString := "" // to prevent duplicates
-	counter := 0
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -69,15 +68,13 @@ func fileToList(c *cli.Context) {
 			continue
 		}
 
-		//fmt.Printf("%d\n", counter)
-		counter ++
 		entry := acc.addString(line)
 
 		if base.withinBounds(entry) {
 
 			prevString = line
 
-			fmt.Printf("%s\n", entry.components[0])
+			fmt.Printf("%s\n", entry.Components[0])
 		}
 
 	}

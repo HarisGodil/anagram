@@ -4,36 +4,46 @@ import (
 	//"fmt"
 )
 
-type charList struct {
-	chars      []int //length 26, chars[0] is # of 'a's, chars[1] is # of 'b's, etc
-	components []string
+type CharList struct {
+	Chars      []int //length 26, chars[0] is # of 'a's, chars[1] is # of 'b's, etc
+	Components []string
 }
 
-func NewCharList() charList {
-	return charList{
-		chars:      make([]int, 26),
-		components: make([]string, 0, 15),
+func NewCharList() CharList {
+	return CharList{
+		Chars:      make([]int, 26),
+		Components: make([]string, 0, 15),
 	}
 }
 
 // takes in a string, and will return a new charList with that string added
-func (c charList) addString(add string) charList {
+func (c CharList) addString(add string) CharList {
 	newChars := generateInts(add)
 
 	for i := 0; i < 26; i++ {
-		newChars[i] += c.chars[i]
+		newChars[i] += c.Chars[i]
 	}
 
-	return charList{
-		chars:      newChars,
-		components: append(c.components, add),
+	return CharList{
+		Chars:      newChars,
+		Components: append(c.Components, add),
 	}
 }
 
-func (c charList) withinBounds(other charList) bool {
+func (c CharList) withinBounds(other CharList) bool {
 
-	for i, val := range c.chars {
-		if val < other.chars[i] {
+	for i, val := range c.Chars {
+		if val < other.Chars[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func (c CharList) equals(other CharList) bool {
+
+	for i, val := range c.Chars {
+		if val != other.Chars[i] {
 			return false
 		}
 	}
@@ -47,7 +57,7 @@ func generateInts(base string) []int {
 	for i, len := 0, len(base); i < len; i++ {
 		ascii := int(base[i])
 
-		if ascii == 32 || ascii == 39 { // space
+		if ascii == 32 || ascii == 39 { // space or apostrophe ignored
 			continue
 		}
 		//fmt.Printf("%c %d\n", ascii, ascii)
@@ -55,7 +65,7 @@ func generateInts(base string) []int {
 		ascii = ascii - 97
 		if ascii < 0 || ascii > 26 {
 			chars[0] = 99999; // used to prevent words with special characters from being used
-							  // should be changed to something that is more understandable
+							  // should be changed to something that is more clear
 			continue;
 		}
 
