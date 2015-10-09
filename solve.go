@@ -8,16 +8,19 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-func solve(base, acc CharList, dict []string, index int, out chan []string) {
+var dict []string // kept as a global to reduce size of recursive call on stack
+
+func solve(base, acc CharList, index int, out chan []string) {
 	if !base.withinBounds(acc) { return }
 	if index >= len(dict) { return }
 	if base.equals(acc) { 
-		out <- acc.Components
+		out <- acc.Components // found a match
 		return
 	}
 
-	solve(base, acc.addString(dict[index]), dict, index, out) // doesn't change index so that it can use a word multiple times
-	solve(base, acc, dict, index + 1, out)
+	// these are thread safe and should use threads later for speed
+	solve(base, acc.addString(dict[index]), index, out) // doesn't change index so that it can use a word multiple times
+	solve(base, acc, index + 1, out)
 } 
 
 func solveAnagram(c *cli.Context) {
@@ -27,23 +30,20 @@ func solveAnagram(c *cli.Context) {
 		fmt.Errorf("Could not read file |%v|", err)
 	}
 
-	dict := strings.Split(string(file), "\n") // last element is empty
+	dict = strings.Split(string(file), "\n") 
+	dict = dict[:len(dict)-1] // last element is empty
 
-	channel := make(chan []string)
+	anagramComponents := make(chan []string)
 
 	acc := NewCharList()
 	base := acc.addString(baseString)
 
-	go solve(base, acc, dict[:len(dict)-1], 0, channel)
+	go solve(base, acc, 0, anagramComponents)
 
 	for{
 		select {
-		case strs := <- channel:
-			fmt.Printf("we got one %v\n", strs)
-			/*for str := range strs {
-				fmt.Printf("%s ", str)
-			}
-			fmt.Println()*/
+		case strs := <- anagramComponents:
+			fmt.Printf("%v\n", strs)
 		}
 	}
 }

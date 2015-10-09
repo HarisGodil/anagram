@@ -4,6 +4,7 @@ import (
 	//"fmt"
 )
 
+// immutable struct to keep track of characters used for a combination of words 
 type CharList struct {
 	Chars      []int //length 26, chars[0] is # of 'a's, chars[1] is # of 'b's, etc
 	Components []string
@@ -30,6 +31,7 @@ func (c CharList) addString(add string) CharList {
 	}
 }
 
+// returns false if the other has more of any char than itself
 func (c CharList) withinBounds(other CharList) bool {
 
 	for i, val := range c.Chars {
@@ -40,6 +42,7 @@ func (c CharList) withinBounds(other CharList) bool {
 	return true
 }
 
+// returns false if the other has a diff # of any char than itself
 func (c CharList) equals(other CharList) bool {
 
 	for i, val := range c.Chars {
@@ -52,6 +55,7 @@ func (c CharList) equals(other CharList) bool {
 
 // assumes that the string passed in is all lowercase and only has alphabetical (and space) characters
 func generateInts(base string) []int {
+
 	chars := make([]int, 26)
 
 	for i, len := 0, len(base); i < len; i++ {
@@ -60,12 +64,11 @@ func generateInts(base string) []int {
 		if ascii == 32 || ascii == 39 { // space or apostrophe ignored
 			continue
 		}
-		//fmt.Printf("%c %d\n", ascii, ascii)
 
 		ascii = ascii - 97
 		if ascii < 0 || ascii > 26 {
-			chars[0] = 99999; // used to prevent words with special characters from being used
-							  // should be changed to something that is more clear
+			chars[0] = 99999; // used to prevent words with special characters from being (e.g. é)
+							  // used should be changed to something that is more clear
 			continue;
 		}
 
